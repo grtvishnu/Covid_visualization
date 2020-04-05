@@ -38,3 +38,6 @@ df2 <- tidyr::pivot_longer(cov_vis, cols=c('Confirmed', 'Deaths'), names_to='var
 ggplot(df2, aes(x=reorder(Country_Region, -value), y=value, fill=variable)) +
   geom_bar(stat='identity', position='dodge')
 
+ggplot(data = df2, aes(x = reorder(Country_Region, -value), y = value, fill = variable)) + 
+  geom_bar(stat = "identity")+ facet_wrap(~ variable) 
+
