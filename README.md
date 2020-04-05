@@ -2,4 +2,4 @@
 ## Tableau
 ![](Images/cov1.png)
 # R
-![](Images/cov1.png)
+![](Images/cov2.png)
