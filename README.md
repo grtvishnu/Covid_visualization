@@ -6,3 +6,5 @@
 ![](Images/cov5.png)
 ### Deaths
 ![](Images/cov6.png)
+### combined
+![](Images/cov3.png)
