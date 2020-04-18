@@ -8,3 +8,7 @@
 ![](Images/cov6.png)
 ### combined
 ![](Images/cov3.png)
+### GIF
+![](Images/tot.gif)
+### GIF
+![](Images/dailyplot.gif)
