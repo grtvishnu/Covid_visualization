@@ -23,10 +23,10 @@ datanew %>%
         transition_reveal(cuml)
 anim_save("Total case")
 
-datanew$month <- as.integer(datanew$month)
 
 datanew$day <- day(datanew$date_confirmation)
 datanew$month <- month(datanew$date_confirmation)
+datanew$month <- as.integer(datanew$month)
 
 new <- datanew %>% 
         filter(month== 3) %>%
@@ -46,3 +46,28 @@ new %>% filter(country == "United States" | country == "France" | country == "Un
         ggtitle("Animated Daily Plot") +
         transition_reveal(day)
 anim_save("dailyplot.gif")
+
+
+
+new <- datanew %>%
+        filter(country == "United States" | country == "France" | country == "United Kingdom" |
+                       country == "Germany") %>% 
+        filter(month == 2| month == 3) %>% 
+        group_by(country, month) %>% 
+        summarise(count = n())
+
+p<- new %>% ggplot(aes(x = country, y = count, fill = country))+
+        geom_bar(stat = "identity")+
+        geom_point(size = 1.5)+
+        theme_bw()+
+        guides(fill = F)
+
+p+ transition_time(month)+
+        labs(title = "Animated Bar Plots By Months",
+             subtitle = "Month :{frame_time}")
+
+
+p+ transition_states(count)+
+        labs(title = "Animated Bar Plots By Months")+
+        shadow_mark()+
+        enter_grow()
