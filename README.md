@@ -12,3 +12,5 @@
 ![](Images/tot.gif)
 ### GIF
 ![](Images/dailyplot.gif)
+### PiE
+![](Images/cov9.png)
