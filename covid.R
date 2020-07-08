@@ -1,43 +1,81 @@
-cov <- read_csv("cov.csv")
+library(tidyverse)
+library(scales)
+cov_latest_all <- read_csv("time_series_19_covid_combined.csv")
 
 
-tail(cov)
+cov_nes <- cov_latest_all %>% 
+  select(Date,country=`Country/Region`, Confirmed, Recovered,Deaths)
 
 
-cov_1 <- cov %>% 
-  select(Country_Region, Last_Update, Confirmed, Deaths)
-plot(cov_1)
+
+cov_in <- cov_nes %>% 
+  filter(country=="India")
 
 
-table(is.na(cov_1))
-
-us_cov<- cov_1 %>% 
-  select(Confirmed,Country_Region, Deaths) %>% 
-  filter(Country_Region == "US")
-
-sum(us_cov$Confirmed)
-sum(us_cov$Deaths)
-
-df <- data.frame("US", "2020-04-04 23:34:21", 308850, 8407 )
-cov_1 <- rbind(cov_1, df)
-names(df) <- c("Country_Region", "Last_Update", "Confirmed", "Deaths")
+cov_nes %>% 
+  group_by(country) %>% 
+  count(Deaths)
 
 
-cov_1<- cov_1 %>% 
-  filter(Country_Region !='US')
 
 
-cov_1 <- cov_1 %>% 
-  arrange(desc(Confirmed))
+cov_nes$country <- as.factor(cov_nes$country)
 
-cov_vis<- head(cov_1,10)
+table(cov_nes$country)
 
-df2 <- tidyr::pivot_longer(cov_vis, cols=c('Confirmed', 'Deaths'), names_to='variable', 
-                           values_to="value")
+ cov_nes %>%
+  group_by(country) %>%
+  summarize(Deaths = count(Deaths))
 
-ggplot(df2, aes(x=reorder(Country_Region, -value), y=value, fill=variable)) +
-  geom_bar(stat='identity', position='dodge')
 
-ggplot(data = df2, aes(x = reorder(Country_Region, -value), y = value, fill = variable)) + 
-  geom_bar(stat = "identity")+ facet_wrap(~ variable) 
+
+cov_stat<- cov_nes %>% 
+  group_by(country) %>% 
+  summarise(Death=sum(Deaths),Confirmed =sum(Confirmed), Recovered=sum(Recovered)) %>% 
+  mutate(Active_case = Confirmed- Recovered)
+
+
+cov_nes %>% 
+  group_by(country) %>% 
+  summarise(Death=sum(Deaths),Confirmed =sum(Confirmed), Recovered=sum(Recovered)) %>% 
+  arrange(desc(Death)) %>% 
+  top_n(10) %>% 
+  ggplot(aes(x=reorder(country,-Death), y= Death, fill=country))+
+  geom_bar(stat = "identity")+
+  scale_y_continuous(labels = comma)
+
+
+cov_nes %>% 
+  group_by(country) %>% 
+  summarise(Death=sum(Deaths),Confirmed =sum(Confirmed), Recovered=sum(Recovered)) %>% 
+  arrange(desc(Confirmed)) %>% 
+  top_n(10) %>% 
+  ggplot(aes(x=reorder(country,-Confirmed), y= Confirmed, fill=country))+
+  geom_bar(stat = "identity")+
+  scale_y_continuous(labels = comma)
+
+cov_nes %>% 
+  group_by(country) %>% 
+  summarise(Death=sum(Deaths),Confirmed =sum(Confirmed), Recovered=sum(Recovered)) %>% 
+  arrange(desc(Recovered)) %>% 
+  top_n(10) %>% 
+  ggplot(aes(x=reorder(country,-Recovered), y= Recovered, fill=country))+
+  geom_bar(stat = "identity")+
+  scale_y_continuous(labels = comma)
+
+cov_nes %>% 
+  group_by(country) %>% 
+  summarise(Death=sum(Deaths),Confirmed =sum(Confirmed), Recovered=sum(Recovered)) %>% 
+  mutate(Active_case = Confirmed - Recovered) %>% 
+  top_n(10) %>% 
+  ggplot(aes(x=reorder(country,Active_case), y= Active_case, fill=country))+
+  geom_bar(stat = "identity")+
+  coord_flip()+
+  scale_y_continuous(labels = comma)
+
+
+
+
+
+
 
