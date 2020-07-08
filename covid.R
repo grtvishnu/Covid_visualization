@@ -1,32 +1,14 @@
 library(tidyverse)
 library(scales)
-cov_latest_all <- read_csv("time_series_19_covid_combined.csv")
+library(lubridate)
+library(gganimate)
+library(gifski)
+cov_latest_all <- read_csv("time-series-19-covid-combined.csv")
 
 
 cov_nes <- cov_latest_all %>% 
   select(Date,country=`Country/Region`, Confirmed, Recovered,Deaths)
-
-
-
-cov_in <- cov_nes %>% 
-  filter(country=="India")
-
-
-cov_nes %>% 
-  group_by(country) %>% 
-  count(Deaths)
-
-
-
-
-cov_nes$country <- as.factor(cov_nes$country)
-
-table(cov_nes$country)
-
- cov_nes %>%
-  group_by(country) %>%
-  summarize(Deaths = count(Deaths))
-
+rm(cov_latest_all)
 
 
 cov_stat<- cov_nes %>% 
@@ -73,9 +55,25 @@ cov_nes %>%
   coord_flip()+
   scale_y_continuous(labels = comma)
 
+cov_nes<- cov_nes %>% 
+mutate(year = lubridate::year(Date), 
+       month = lubridate::month(Date), 
+       day = lubridate::day(Date))
 
 
-
-
-
-
+ani1<- cov_nes %>% 
+  group_by(Date,country) %>% 
+  summarise(Death=sum(Deaths),Confirmed =sum(Confirmed), Recovered=sum(Recovered)) %>% 
+  arrange(desc(Death)) %>%
+  filter(country=="India"|
+         country=="US"|
+         country=="Brazil"|
+         country=="Russia") %>% 
+  ggplot(aes(Date,Death, color =country))+
+  ggtitle("India Confirmed Cases")+
+  geom_line()+
+  scale_y_continuous(labels = comma)+
+  geom_point(size =1.5)+
+  transition_reveal(Confirmed)
+animate(ani1, height=600, width=800, fps = 30,duration = 10, end_pause = 60, res=100)  
+anim_save('india_conf.gif')
