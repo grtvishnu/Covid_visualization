@@ -3,21 +3,20 @@ library(scales)
 library(lubridate)
 library(gganimate)
 library(gifski)
-cov_nes <- read_csv("time-series-19-covid-combined.csv")
+covid <- read_csv("time-series-19-covid-combined.csv")
 
-
-cov_nes <- cov_nes %>% 
+# Remove unnecessary Columns and Rename
+covid <- covid %>% 
   select(Date,country=`Country/Region`, Confirmed, Recovered,Deaths)
-rm(cov_latest_all)
 
 
-cov_stat<- cov_nes %>% 
+cov_stat<- covid %>% 
   group_by(country) %>% 
   summarise(Death=max(Deaths),Confirmed =max(Confirmed), Recovered=max(Recovered)) %>% 
   mutate(Active_case = Confirmed- Recovered)
 
 
-cov_nes %>% 
+covid %>% 
   group_by(country) %>% 
   summarise(Death=max(Deaths),Confirmed =max(Confirmed), Recovered=max(Recovered)) %>% 
   arrange(desc(Death)) %>% 
@@ -27,7 +26,7 @@ cov_nes %>%
   scale_y_continuous(labels = comma)
 
 
-cov_nes %>% 
+covid %>% 
   group_by(country) %>% 
   summarise(Death=max(Deaths),Confirmed =max(Confirmed), Recovered=max(Recovered)) %>% 
   arrange(desc(Confirmed)) %>% 
@@ -36,7 +35,7 @@ cov_nes %>%
   geom_bar(stat = "identity")+
   scale_y_continuous(labels = comma)
 
-cov_nes %>% 
+covid %>% 
   group_by(country) %>% 
   summarise(Death=max(Deaths),Confirmed =max(Confirmed), Recovered=max(Recovered)) %>% 
   arrange(desc(Recovered)) %>% 
@@ -45,7 +44,7 @@ cov_nes %>%
   geom_bar(stat = "identity")+
   scale_y_continuous(labels = comma)
 
-cov_nes %>% 
+covid %>% 
   group_by(country) %>% 
   summarise(Death=max(Deaths),Confirmed =max(Confirmed), Recovered=max(Recovered)) %>% 
   mutate(Active_case = Confirmed - Recovered) %>% 
@@ -55,13 +54,13 @@ cov_nes %>%
   coord_flip()+
   scale_y_continuous(labels = comma)
 
-cov_nes<- cov_nes %>% 
+covid<- covid %>% 
 mutate(year = lubridate::year(Date), 
        month = lubridate::month(Date), 
        day = lubridate::day(Date))
 
 
-ani1<- cov_nes %>% 
+ani1<- covid %>% 
   group_by(Date,country) %>% 
   summarise(Death=max(Deaths),Confirmed =max(Confirmed), Recovered=max(Recovered)) %>% 
   arrange(desc(Death)) %>%
@@ -78,7 +77,7 @@ ani1<- cov_nes %>%
 animate(ani1, height=600, width=800, fps = 30,duration = 10, end_pause = 60, res=100)  
 
 
-ani1<- cov_nes %>% 
+ani1<- covid %>% 
   group_by(Date,country) %>% 
   summarise(Death=sum(Deaths),Confirmed =max(Confirmed), Recovered=max(Recovered)) %>% 
   arrange(desc(Death)) %>%
@@ -95,7 +94,7 @@ ani1<- cov_nes %>%
 animate(ani1, height=600, width=800, fps = 30,duration = 10, end_pause = 60, res=100)  
 
 
-ani1<- cov_nes %>% 
+ani1<- covid %>% 
   group_by(Date,country) %>% 
   summarise(Death=max(Deaths),Confirmed =max(Confirmed), Recovered=max(Recovered)) %>% 
   arrange(desc(Recovered)) %>%
@@ -113,7 +112,7 @@ animate(ani1, height=600, width=800, fps = 30,duration = 10, end_pause = 60, res
 
 
 
-p<- cov_nes %>% 
+p<- covid %>% 
   group_by(Date,country) %>% 
   summarise(Death=sum(Deaths),Confirmed =sum(Confirmed), Recovered=sum(Recovered)) %>% 
   arrange(desc(Death)) %>% 
