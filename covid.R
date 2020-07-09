@@ -70,6 +70,25 @@ anim_save("india.gif")
 
 #Animated Graph Multiple Countries (Line Graph)
 p2<- covid %>% 
+        group_by(country,Date) %>% 
+        summarise(Death=max(Deaths),Confirmed =max(Confirmed), Recovered=max(Recovered)) %>% 
+        arrange(desc(Confirmed)) %>%
+        filter(country=="India"|
+                 country=="US"|
+                 country=="Brazil"|
+                 country=="Russia") %>% 
+        ggplot(aes(Date,Confirmed, color =country))+
+        ggtitle("Confirmed Cases")+
+        geom_line()+
+        scale_y_continuous(labels = comma)+
+        geom_point(size =1.5)+
+        transition_reveal(Confirmed)
+animate(p2, height=600, width=800, fps = 30,duration = 10, end_pause = 60, res=100)  
+anim_save("all confirmed.gif ")
+
+# Animated Graph total death multiple Countries (Bar plot)
+
+p3<- covid %>% 
   group_by(country,Date) %>% 
   summarise(Death=max(Deaths),Confirmed =max(Confirmed), Recovered=max(Recovered)) %>% 
   arrange(desc(Confirmed)) %>%
@@ -77,28 +96,11 @@ p2<- covid %>%
            country=="US"|
            country=="Brazil"|
            country=="Russia") %>% 
-  ggplot(aes(Date,Confirmed, color =country))+
-  ggtitle("Confirmed Cases")+
-  geom_line()+
-  scale_y_continuous(labels = comma)+
-  geom_point(size =1.5)+
-  transition_reveal(Confirmed)
-animate(p2, height=600, width=800, fps = 30,duration = 10, end_pause = 60, res=100)  
-anim_save("all confirmed.gif ")
-
-# Animated Graph total death multiple Countries (Bar plot)
-p3<- covid %>% 
-  group_by(country,Date) %>% 
-  summarise(Death=max(Deaths),Confirmed =max(Confirmed), Recovered=max(Recovered)) %>% 
-  arrange(desc(Death)) %>% 
-  filter(country=="India"|
-           country=="US"|
-           country=="Brazil"|
-           country=="Russia") %>% 
-  ggplot(aes(x=reorder(country,-Death), y= Death, fill=country))+
+  ggplot(aes(x=reorder(country, -Death), y=Death, fill=country))+
   geom_bar(stat = "identity")+
-  ggtitle("Total Death")+
   scale_y_continuous(labels = comma)+
-  transition_time(Date)
-animate(p3, height=600, width=800, fps = 30,duration = 10, end_pause = 60, res=100)  
-anim_save("all dead.gif ")
+  transition_time(Date)+
+  labs(title = "Animated Bar Graph",
+       subtitle = 'Day : {frame_time}')
+animate(p3,height=600, width=800, fps = 30,duration = 10, end_pause = 60, res=100)
+anim_save("bar.gif")
