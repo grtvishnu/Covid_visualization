@@ -2,6 +2,8 @@
 :octocat:Visualization Using R and Tableau:octocat:
 
 # Covid_visualization
+## 3D Intractive
+![](3D_map_plot/dist_data_combine/kk1.png)
 ## Tableau
 ![](Images/cov1.png)
 ## R
