@@ -25,3 +25,8 @@ plot_gg(kk, width = 5, height = 4, scale = 300, raytrace = FALSE, windowsize = c
 #Save plot as png
 render_snapshot('kk1.png')
 
+Sys.sleep(0.2)
+render_highquality(samples = 400, aperture=30, light = FALSE, ambient = TRUE,focal_distance = 1700,
+                   obj_material = rayrender::dielectric(attenuation = c(1,1,0.3)/200), 
+                   ground_material = rayrender::diffuse(checkercolor = "grey80",sigma=90,checkerperiod = 100))
+
