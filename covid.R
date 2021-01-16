@@ -1,10 +1,10 @@
 # Load libraries
-# install.packages("tidyverse")
 library(tidyverse)
 library(scales)
 library(lubridate)
 library(gganimate)
 library(gifski)
+
 covid <- read_csv("time-series-19-covid-combined.csv")
 
 # Remove unnecessary Columns and Rename
