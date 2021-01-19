@@ -4,7 +4,7 @@ library(data.table)
 result <- fromJSON(file="https://api.covid19india.org/state_district_wise.json")
 
 class(result)
-# result[["statewise"]][[1]][["active"]]
+result[["statewise"]][[1]][["active"]]
 # 
 # state<- result[["statewise"]]
 # df<- do.call(rbind.data.frame, state)
